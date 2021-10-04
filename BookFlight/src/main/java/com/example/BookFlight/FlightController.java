@@ -4,75 +4,88 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController("api/v1.0/flight/")
 public class FlightController {
 
 	@Autowired
-	BookingService bookingService;
-	
-	@Autowired
 	AdminService adminService;
 	
 	@Autowired
-	FlightService flightService;
+	UserService userService;
 	
 	@PostMapping("airline/register")
-	public void newBooking(@RequestBody Booking booking) {
+	public String newBooking(@RequestBody Airline airline) {
+		System.out.println("Airline name: " + airline.getAirlineName());
+		System.out.println("Adding new airline...");
 		
-		bookingService.saveBooking(booking);;
-		System.out.println("Booking created successfully");
-
+		adminService.addAirline(airline);
+		return "Airline Added Successfully!";
 	}
 	
 	
 	@PostMapping("admin/login")
-	public void adminLogin() {
+	public void adminLogin(Admin admin) {
 		
-		adminService.adminLogin();
+		adminService.adminLogin(admin);
 	}
 	
 	
 	@PostMapping("airline/inventory/add")
-	public void addInvetory(@RequestBody Flight flight) {
+	public String addInvetory(@RequestBody Flight flight) {
 		
 		System.out.println("ADDING FLIGHT...");
-		flightService.addFlight(flight);
-	}
-	
-	
-	@GetMapping("flight/search")
-	public List<Flight> search(@RequestParam String source) {
-		System.out.println("Getting flights from" + source);
-		return flightService.searchFlight(source);
-	}
-	
-	
-	@PostMapping("booking/{flightd}")
-	public void bookTicket() {
+		System.out.println("Flight to: " + flight.flightTo);
+		adminService.addFlight(flight);
 		
+		return "Flight Successfully added!";
 	}
 	
+	
+	@GetMapping("flight/search/{mode}/{value}")
+	public List<Flight> search(@PathVariable("mode") String mode, @PathVariable("value") String value) {
+		
+		System.out.println("Hang tight! While we fetch you the flights :)");
+		return userService.searchFlight(mode, value);
+	}
+	
+	
+	@PostMapping("booking/")
+	public String bookTicket(@RequestBody Ticket ticket) {
+		
+		Integer PNR = userService.saveBooking(ticket);
+		System.out.println("Ticket booked successfully");
+		
+		return "Ticket booked with PNR: " +  PNR;
+	}
+	
+	//Search for ticket.
 	@GetMapping("ticket/{pnr}")
-	public void getTicketFromPnr() {
+	public Optional<Ticket> getTicketFromPnr(@PathVariable("pnr") Integer pnr) {
+		System.out.println("Searching ticket for PNR: " + pnr);
 		
+		return userService.searchTicket(pnr);
 	}
 	
-	@GetMapping("/booking/history")
-	public String getTicketHistoryBasedOnEmail(@RequestParam String email) {
-		System.out.println("Email found: " + email);
+	@GetMapping("/booking/history/{email}")
+	public List<Ticket> getTicketHistoryBasedOnEmail(@PathVariable("email") String email){
+		System.out.println("Searching history for email: " + email);
 		
-		return email;
-		
+		return userService.searchByEmail(email);
 	}
 	
 	@DeleteMapping("booking/cancel/{pnr}")
-	public void cancelTicket() {
+	public String cancelTicket(@PathVariable("pnr") Integer pnr) {
+		System.out.println("Cancelling ticket with PNR: " + pnr);
+		
+		userService.cancelTicket(pnr);
+		
+		return "Ticket successfully deleted!";
 		
 	}
+	
 }

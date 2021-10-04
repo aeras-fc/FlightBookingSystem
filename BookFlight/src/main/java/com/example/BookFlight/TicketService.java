@@ -1,12 +1,16 @@
 package com.example.BookFlight;
 
+import java.util.Optional;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 @Service
-public class FlightService {
+public class TicketService {
+	@Autowired
+	TicketRepository repoTicket;
+	
 	@Autowired
     FlightRepository repoFlight;
 	
@@ -31,5 +35,25 @@ public class FlightService {
 			return repoFlight.findByflightFrom(value);
 		}
 			
+	}
+	
+	public Integer saveBooking(Ticket ticket) {
+		repoTicket.save(ticket);
+		
+		return ticket.getId();
+	}
+	
+	public Optional<Ticket> searchTicket(Integer PNR) {
+		return repoTicket.findById(PNR);
+	}
+	
+	public List<Ticket> searchByEmail(String email){
+		return repoTicket.findByemailId(email);
+	}
+	
+	public void cancelTicket(Integer pnr) {
+		repoTicket.deleteById(pnr);
+		
+		return;
 	}
 }
