@@ -10,15 +10,21 @@ public class Flight {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	public String date;
-	public String time;
- 	public String flightFrom;
-	public String flightTo;
+	String date;
+	String time;
+ 	String flightFrom;
+	String flightTo;
 //	Trip trip;
-//	Seats noOfSeats;
-	public int flightNo;
+	int noOfSeats;
+	int flightNo;
 	
 	
+	public int getNoOfSeats() {
+		return noOfSeats;
+	}
+	public void setNoOfSeats(int noOfSeats) {
+		this.noOfSeats = noOfSeats;
+	}
 	public String getDate() {
 		return date;
 	}

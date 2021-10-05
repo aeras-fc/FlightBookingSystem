@@ -20,7 +20,6 @@ public class FlightController {
 	
 	@PostMapping("airline/register")
 	public String newBooking(@RequestBody Airline airline) {
-		System.out.println("Airline name: " + airline.getAirlineName());
 		System.out.println("Adding new airline...");
 		
 		adminService.addAirline(airline);
@@ -39,7 +38,7 @@ public class FlightController {
 	public String addInvetory(@RequestBody Flight flight) {
 		
 		System.out.println("ADDING FLIGHT...");
-		System.out.println("Flight to: " + flight.flightTo);
+		System.out.println("No. of seats: " + flight.flightTo);
 		adminService.addFlight(flight);
 		
 		return "Flight Successfully added!";
